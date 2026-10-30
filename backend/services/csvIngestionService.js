@@ -7,6 +7,16 @@ const { parseAndValidateSpreadsheet, normalizeRow } = require('../utils/csvParse
 const { mapDesignationToSeniority } = require('../utils/designationHelper');
 
 /**
+ * Safely extract numeric digits from strings like "Sem 3", "Semester 4", "Sem-5", "4th", or 3
+ */
+function extractNumber(val, defaultVal = 1) {
+  if (typeof val === 'number' && !isNaN(val)) return val;
+  if (!val) return defaultVal;
+  const match = String(val).match(/\d+/);
+  return match ? parseInt(match[0], 10) : defaultVal;
+}
+
+/**
  * Strategy Pattern: Entity Ingestion Strategies
  * Supports both Excel (.xlsx, .xls) and CSV (.csv) formats with extended attributes.
  */
@@ -14,11 +24,12 @@ const INGESTION_STRATEGIES = {
   students: async (rows) => {
     let count = 0;
     for (const row of rows) {
+      const semester = extractNumber(row.semester, 1);
       const [result] = await query(
         `INSERT INTO students (enrollment_no, name, email, department, semester, program)
          VALUES (?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE name = VALUES(name), email = VALUES(email), department = VALUES(department), semester = VALUES(semester), program = VALUES(program)`,
-        [row.enrollment_no, row.name, row.email, row.department, parseInt(row.semester, 10) || 1, row.program || 'B.Tech']
+        [row.enrollment_no, row.name, row.email, row.department, semester, row.program || 'B.Tech']
       );
 
       // Resolve student id
@@ -60,8 +71,8 @@ const INGESTION_STRATEGIES = {
       await query(
         `INSERT INTO faculty (faculty_code, name, email, department, designation, seniority_level, max_duties)
          VALUES (?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE name = VALUES(name), email = VALUES(email), department = VALUES(department), designation = VALUES(designation), seniority_level = VALUES(seniority_level)`,
-        [row.faculty_code, row.name, row.email, row.department, designation, seniorityLevel, parseInt(row.max_duties, 10) || 5]
+         ON DUPLICATE KEY UPDATE name = VALUES(name), email = VALUES(email), department = VALUES(department), designation = VALUES(designation), seniority_level = VALUES(seniority_level), max_duties = VALUES(max_duties)`,
+        [row.faculty_code, row.name, row.email, row.department, designation, seniorityLevel, extractNumber(row.max_duties, 5)]
       );
       count++;
     }
@@ -71,12 +82,15 @@ const INGESTION_STRATEGIES = {
   courses: async (rows) => {
     let count = 0;
     for (const row of rows) {
+      const semester = extractNumber(row.semester, 1);
+      const difficulty = extractNumber(row.difficulty_level, 3);
       await query(
-        `INSERT INTO courses (course_code, course_name, department, eligible_branches, credits, target_batch, course_coordinator_name, difficulty_level)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO courses (course_code, course_name, department, semester, eligible_branches, credits, target_batch, course_coordinator_name, difficulty_level)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE 
             course_name = VALUES(course_name), 
             department = VALUES(department), 
+            semester = VALUES(semester),
             eligible_branches = COALESCE(VALUES(eligible_branches), eligible_branches),
             credits = COALESCE(VALUES(credits), credits),
             target_batch = COALESCE(VALUES(target_batch), target_batch),
@@ -86,11 +100,12 @@ const INGESTION_STRATEGIES = {
           row.course_code,
           row.course_name,
           row.department || 'CSE',
+          semester,
           row.eligible_branches || row.department || 'CSE',
           parseFloat(row.credits) || 3.0,
           row.target_batch || null,
           row.course_coordinator_name || null,
-          parseInt(row.difficulty_level, 10) || 3
+          difficulty
         ]
       );
       count++;
@@ -101,9 +116,9 @@ const INGESTION_STRATEGIES = {
   rooms: async (rows) => {
     let count = 0;
     for (const row of rows) {
-      const capacity = parseInt(row.capacity, 10) || 30;
-      const rowsCount = parseInt(row.rows_count, 10) || 5;
-      const colsCount = parseInt(row.cols_count, 10) || Math.ceil(capacity / rowsCount);
+      const capacity = extractNumber(row.capacity, 30);
+      const rowsCount = extractNumber(row.rows_count, 5);
+      const colsCount = extractNumber(row.cols_count, Math.ceil(capacity / rowsCount));
       await query(
         `INSERT INTO rooms (room_number, building, capacity, rows_count, cols_count)
          VALUES (?, ?, ?, ?, ?)
