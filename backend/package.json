@@ -8,8 +8,8 @@
     "dev": "nodemon server.js",
     "init-db": "node database/init-db.js",
     "migrate": "node database/migrate.js",
-    "test": "node tests/test-auth-and-masterdata.js && node tests/test-xlsx-ingestion.js && node tests/test-exam-scheduling.js && node tests/test-seating-engine.js && node tests/test-invigilator-attendance.js && node tests/test-duty-workload.js && node tests/test-faculty-portal.js && node tests/test-analytics-reports.js && node tests/test-designation-levels.js && node tests/test-incident-management.js && node tests/test-api-flow.js",
-    "test:all": "node tests/test-auth-and-masterdata.js && node tests/test-xlsx-ingestion.js && node tests/test-exam-scheduling.js && node tests/test-seating-engine.js && node tests/test-invigilator-attendance.js && node tests/test-duty-workload.js && node tests/test-faculty-portal.js && node tests/test-analytics-reports.js && node tests/test-designation-levels.js && node tests/test-incident-management.js && node tests/test-api-flow.js",
+    "test": "node tests/test-auth-and-masterdata.js && node tests/test-xlsx-ingestion.js && node tests/test-exam-scheduling.js && node tests/test-seating-engine.js && node tests/test-invigilator-attendance.js && node tests/test-duty-workload.js && node tests/test-faculty-portal.js && node tests/test-analytics-reports.js && node tests/test-designation-levels.js && node tests/test-incident-management.js && node tests/test-notification-alert-system.js && node tests/test-api-flow.js",
+    "test:all": "node tests/test-auth-and-masterdata.js && node tests/test-xlsx-ingestion.js && node tests/test-exam-scheduling.js && node tests/test-seating-engine.js && node tests/test-invigilator-attendance.js && node tests/test-duty-workload.js && node tests/test-faculty-portal.js && node tests/test-analytics-reports.js && node tests/test-designation-levels.js && node tests/test-incident-management.js && node tests/test-notification-alert-system.js && node tests/test-api-flow.js",
     "test:auth": "node tests/test-auth-and-masterdata.js",
     "test:scheduling": "node tests/test-exam-scheduling.js",
     "test:seating": "node tests/test-seating-engine.js",
@@ -20,6 +20,7 @@
     "test:designation": "node tests/test-designation-levels.js",
     "test:smart": "node tests/test-smart-allocation.js",
     "test:incident": "node tests/test-incident-management.js",
+    "test:notification": "node tests/test-notification-alert-system.js",
     "test:api": "node tests/test-api-flow.js"
   },
   "keywords": [

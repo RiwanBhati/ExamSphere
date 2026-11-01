@@ -579,4 +579,42 @@ export const api = {
   getUFMSummary() {
     return this.request('/analytics/ufm-summary');
   },
+
+  // Module 9: Notification & Alert System
+  sendEmergencyBroadcast(data) {
+    return this.request('/notifications/broadcast', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  getNotificationLogs(params = {}) {
+    const searchParams = new URLSearchParams();
+    if (params.search) searchParams.append('search', params.search);
+    if (params.recipient) searchParams.append('recipient', params.recipient);
+    if (params.type) searchParams.append('type', params.type);
+    if (params.status) searchParams.append('status', params.status);
+    if (params.limit) searchParams.append('limit', params.limit);
+    if (params.offset) searchParams.append('offset', params.offset);
+    const qs = searchParams.toString();
+    return this.request(`/notifications/logs${qs ? `?${qs}` : ''}`);
+  },
+
+  getNotificationStats() {
+    return this.request('/notifications/stats');
+  },
+
+  sendStudentNotification(data) {
+    return this.request('/notifications/student', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  sendFacultyDutyNotification(data) {
+    return this.request('/notifications/faculty', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 };

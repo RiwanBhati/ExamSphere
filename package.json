@@ -12,6 +12,7 @@
     "test:duty": "npm run test:duty --prefix backend",
     "test:smart": "npm run test:smart --prefix backend",
     "test:incident": "npm run test:incident --prefix backend",
+    "test:notification": "npm run test:notification --prefix backend",
     "test:api": "npm run test:api --prefix backend",
     "seed": "npm run seed --prefix backend",
     "seed:bmu": "npm run seed:bmu --prefix backend",

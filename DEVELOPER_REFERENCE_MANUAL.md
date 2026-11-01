@@ -47,7 +47,7 @@
 | **6** | **Faculty Portal & Doubt Resolution** | Allow faculty to view examination schedules and assigned duties, receive student doubt requests through email, and respond to them. | **COMPLETED & LIVE** |
 | **7** | **Invigilator Portal & Attendance** | View assigned duties, verify student identities, perform camera-based face matching, and record attendance. | *Pending* |
 | **8** | **Exam-Day Incident Management** | Submit Unfair Means (UFM) reports with photo evidence and written statements, manage incident records, and find substitute invigilators. | *Pending* |
-| **9** | **Notification & Alert System** | Send student examination and seating emails, faculty duty notifications, and emergency alerts; track notification status. | *Pending* |
+| **9** | **Notification & Alert System** | Send student examination and seating emails, faculty duty notifications, and emergency alerts; track notification status. | **COMPLETED & LIVE** |
 | **10** | **Analytics & Reports** | Generate attendance statistics, room utilization reports, faculty workload reports, and UFM summaries for administrators. | *Pending* |
 
 ---
@@ -302,9 +302,14 @@ All tables exist in `examsphere_db` and are initialized via `backend/database/sc
 - **Path:** `backend/services/incidentService.js` & `backend/controllers/incidentController.js`
 - **Functionalities:** Digital Unfair Means (UFM) reporting with photo evidence upload and student statements, incident status review pipeline, substitute invigilator search.
 
-### Module 9: Notification & Alert System (Pending)
-- **Path:** `backend/services/notificationService.js` & `backend/controllers/notificationController.js`
-- **Functionalities:** Asynchronous email dispatching (Nodemailer/SMTP), personalized student seating coordinates and schedules, faculty duty alerts, emergency notifications.
+### Module 9: Notification & Alert System (Completed & Live)
+- **Path:** `backend/services/notificationService.js`, `backend/controllers/notificationController.js`, `backend/routes/notificationRoutes.js`, `frontend/src/components/notifications/NotificationAlertSystemView.jsx`, `backend/tests/test-notification-alert-system.js`
+- **Functionalities:**
+  1. **TC01 - Student Seating Allotment Notifications:** Automated generation & dispatch of personalized student examination seating allotments with room coordinates and printable hall ticket details.
+  2. **TC02 - Faculty Duty Notifications:** Automated invigilation duty assignment notices delivered with time slot, room assignment, and reporting instructions.
+  3. **TC03 - Emergency Broadcast Alerts:** Campus-wide or attendee-targeted emergency broadcast dispatcher (e.g., Room Shift Notice: "Exam shifted to Hall 2 due to power maintenance") with instantaneous multi-recipient logging and confirmation banner.
+  4. **TC04 - Notification Logs & Delivery Tracking:** Real-time log table supporting recipient filtering (e.g., search for `aman.sharma@college.edu`), sent timestamps, subject lines, and official delivery status badges marked as `"Delivered"`.
+  5. **Automated Headless Unit Tests:** `backend/tests/test-notification-alert-system.js` (5 comprehensive unit tests covering TC01-TC04 and summary delivery metrics).
 
 ### Module 10: Analytics & Reports (Pending)
 - **Path:** `backend/services/analyticsService.js` & `backend/controllers/analyticsController.js`

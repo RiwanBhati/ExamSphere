@@ -45,6 +45,7 @@ function verifyToken(req, res, next) {
  * @param  {...string} allowedRoles ('ADMIN', 'FACULTY', 'STUDENT')
  */
 function requireRole(...allowedRoles) {
+  const roles = allowedRoles.flat();
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
@@ -53,10 +54,10 @@ function requireRole(...allowedRoles) {
       });
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `Forbidden: Access restricted. Required role: [${allowedRoles.join(', ')}], your role: [${req.user.role}].`
+        message: `Forbidden: Access restricted. Required role: [${roles.join(', ')}], your role: [${req.user.role}].`
       });
     }
 

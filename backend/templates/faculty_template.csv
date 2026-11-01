@@ -1,0 +1,5 @@
+faculty_code,name,email,department,designation,seniority_level,max_duties
+FAC101,Dr. Shilpa Mahajan,sh@bmu.edu.in,CSE,Associate Professor,2,4
+FAC102,Dr. Nishtha Phutela,ni@bmu.edu.in,CSE,Assistant Professor,1,5
+FAC103,Dr. Harsh Taneja,ha@bmu.edu.in,ECE,Associate Professor,2,4
+FAC104,Dr. Sukhandeep Kaur,su@bmu.edu.in,ME,Assistant Professor,1,5

@@ -11,8 +11,9 @@ import FacultyPortalView from './components/faculty/FacultyPortalView';
 import PortalLoginView from './components/PortalLoginView';
 import AdminAttendanceView from './components/AdminAttendanceView';
 import AnalyticsReportsView from './components/AnalyticsReportsView';
+import NotificationAlertSystemView from './components/notifications/NotificationAlertSystemView';
 import { api } from './api';
-import { Database, Users, FileText, Grid, Eye, Camera, Calendar, HelpCircle, BarChart3 } from 'lucide-react';
+import { Database, Users, FileText, Grid, Eye, Camera, Calendar, HelpCircle, BarChart3, Bell } from 'lucide-react';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -194,6 +195,14 @@ export default function App() {
             <BarChart3 size={16} />
             <span>Reports</span>
           </button>
+
+          <button
+            className={`tab-btn ${activeTab === 'notifications' ? 'active' : ''}`}
+            onClick={() => setActiveTab('notifications')}
+          >
+            <Bell size={16} />
+            <span>Notifications</span>
+          </button>
         </div>
 
         {/* Dynamic Tab Views with Integrated Inter-Page Workflow Handlers */}
@@ -242,6 +251,10 @@ export default function App() {
 
         {activeTab === 'analytics' && (
           <AnalyticsReportsView user={user} />
+        )}
+
+        {activeTab === 'notifications' && (
+          <NotificationAlertSystemView user={user} />
         )}
       </main>
     </div>

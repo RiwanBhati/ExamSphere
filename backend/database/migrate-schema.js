@@ -53,6 +53,23 @@ async function runMigration() {
   await ensureColumn('exams', 'registered_students_count', 'INT DEFAULT 0');
   await ensureColumn('exams', 'required_rooms_count', 'INT DEFAULT 1');
 
+  // 5b. Notifications (Module 9: Notification & Alert System)
+  await ensureColumn('notifications', 'recipient_name', 'VARCHAR(120) NULL AFTER user_id');
+  try {
+    await query("ALTER TABLE notifications MODIFY COLUMN delivery_status VARCHAR(50) NOT NULL DEFAULT 'Delivered'");
+  } catch (e) {}
+  try {
+    await query("ALTER TABLE notifications MODIFY COLUMN type VARCHAR(100) NOT NULL");
+  } catch (e) {}
+
+  // 5c. UFM Reports (Module 8: Incident Management)
+  try {
+    await query("ALTER TABLE ufm_reports MODIFY COLUMN evidence_photo_url LONGTEXT NULL");
+    await query("ALTER TABLE ufm_reports MODIFY COLUMN student_id INT NULL");
+    await query("ALTER TABLE ufm_reports MODIFY COLUMN room_id INT NULL");
+    await query("ALTER TABLE ufm_reports MODIFY COLUMN invigilator_id INT NULL");
+  } catch (e) {}
+
   // 6. Ensure course_section_instructors table exists
   await query(`
     CREATE TABLE IF NOT EXISTS course_section_instructors (

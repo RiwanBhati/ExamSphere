@@ -487,17 +487,29 @@ export default function ExamIncidentManagementView({ user, onNavigateToStep }) {
       return;
     }
 
+    const matchedExam = exams.find(x => String(x.id) === String(form.exam_id)) || exams[0];
+    const matchedRoom = rooms.find(r => String(r.id) === String(form.room_id)) || rooms[0];
+
     const reportData = {
       ...form,
-      invigilator_id: user ? user.id : 1,
+      exam_id: form.exam_id || matchedExam?.id || 1,
+      exam_name: form.exam_name || matchedExam?.exam_name || 'Semester Examination',
+      course_code: form.course_code || matchedExam?.course_code || '',
+      room_id: form.room_id || matchedRoom?.id || 1,
+      room_number: form.room_number || matchedRoom?.room_number || 'Exam Hall',
+      student_name: form.student_name.trim(),
+      student_roll: form.student_roll.trim(),
+      student_dept: form.student_dept ? form.student_dept.trim() : 'CSE',
+      invigilator_id: user ? (user.faculty_id || user.facultyId || user.id) : 1,
       invigilator_name: user ? user.name : 'Dr. Shilpa Mahajan',
       invigilator_department: user && user.department ? user.department : 'CSE'
     };
 
     try {
       const res = await api.submitIncident(reportData);
-      if (res.data) {
-        setIncidents(prev => [res.data, ...prev]);
+      if (res && res.data) {
+        setIncidents(prev => [res.data, ...prev.filter(x => x.id !== res.data.id)]);
+        await loadIncidents();
         alert(`Case report ${res.data.report_number} submitted successfully!`);
       }
     } catch (err) {
@@ -556,21 +568,34 @@ export default function ExamIncidentManagementView({ user, onNavigateToStep }) {
     const q = searchQuery.toLowerCase();
     if (!q) return true;
     return (
-      r.report_number.toLowerCase().includes(q) ||
-      r.student_name.toLowerCase().includes(q) ||
-      r.student_roll.toLowerCase().includes(q) ||
+      (r.report_number || '').toLowerCase().includes(q) ||
+      (r.student_name || '').toLowerCase().includes(q) ||
+      (r.student_roll || '').toLowerCase().includes(q) ||
       (r.student_dept && r.student_dept.toLowerCase().includes(q)) ||
-      r.exam_name.toLowerCase().includes(q) ||
-      r.room_number.toLowerCase().includes(q) ||
-      r.invigilator_name.toLowerCase().includes(q)
+
+      (r.exam_name || '').toLowerCase().includes(q) ||
+      (r.room_number || '').toLowerCase().includes(q) ||
+      (r.invigilator_name || '').toLowerCase().includes(q)
+
+
+
+
+
+
     );
   });
 
   // Filtered List for Faculty (Their own submitted reports)
   const facultyMyReports = incidents.filter(r => {
-    if (!user) return true;
-    return r.invigilator_name.toLowerCase().includes(user.name.toLowerCase()) || 
-           Number(r.invigilator_id) === Number(user.id);
+    if (!user || user.role === 'ADMIN') return true;
+    const cleanU = (user.name || '').toLowerCase().replace(/^(dr\.|prof\.|mr\.|ms\.|mrs\.)\s*/i, '').trim();
+    const cleanI = (r.invigilator_name || '').toLowerCase().replace(/^(dr\.|prof\.|mr\.|ms\.|mrs\.)\s*/i, '').trim();
+    return (
+      (cleanU && cleanI && (cleanI.includes(cleanU) || cleanU.includes(cleanI))) ||
+      Number(r.invigilator_id) === Number(user.id) ||
+      Number(r.invigilator_id) === Number(user.faculty_id) ||
+      Number(r.invigilator_id) === Number(user.facultyId)
+    );
   });
 
   // Unique affected rooms
