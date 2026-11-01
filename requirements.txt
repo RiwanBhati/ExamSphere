@@ -1,0 +1,89 @@
+# ==============================================================================
+# ExamSphere - Examination Management System
+# Project Requirements & Dependencies Specification
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. SYSTEM & RUNTIME PREREQUISITES
+# ------------------------------------------------------------------------------
+# Node.js Runtime:
+node>=18.0.0
+
+# Package Manager:
+npm>=9.0.0
+
+# Database Engine:
+mysql-server>=8.0.0
+
+# Supported Operating Systems:
+# - Windows 10 / 11
+# - Linux (Ubuntu 20.04+, Debian 11+, CentOS 8+)
+# - macOS (Monterey 12+)
+
+# Recommended Web Browsers:
+# - Google Chrome (v110+)
+# - Brave Browser (v1.50+)
+# - Mozilla Firefox (v115+)
+# - Microsoft Edge (v110+)
+
+
+# ------------------------------------------------------------------------------
+# 2. BACKEND DEPENDENCIES (backend/package.json)
+# ------------------------------------------------------------------------------
+express==4.19.2
+mysql2==3.9.7
+bcryptjs==2.4.3
+jsonwebtoken==9.0.2
+multer==1.4.5-lts.1
+dotenv==16.4.5
+cors==2.8.5
+csv-parser==3.0.0
+xlsx==0.18.5
+nodemailer==10.1.6
+nodemon==3.1.0
+
+
+# ------------------------------------------------------------------------------
+# 3. FRONTEND DEPENDENCIES (frontend/package.json)
+# ------------------------------------------------------------------------------
+react==19.2.8
+react-dom==19.2.8
+vite==8.3.4
+lucide-react==1.55.0
+@emailjs/browser==5.0.3
+@vitejs/plugin-react==6.1.1
+@types/react==19.2.18
+@types/react-dom==19.2.7
+oxlint==1.81.0
+
+
+# ------------------------------------------------------------------------------
+# 4. ROOT WORKSPACE DEPENDENCIES (package.json)
+# ------------------------------------------------------------------------------
+concurrently==9.1.2
+
+
+# ------------------------------------------------------------------------------
+# 5. ENVIRONMENT & PORT SPECIFICATIONS
+# ------------------------------------------------------------------------------
+# Backend Service Port: 5000 (http://localhost:5000)
+# Frontend Client Port: 5173 (http://localhost:5173)
+# Database Connection: localhost:3306
+# Database Name: examsphere_db
+
+
+# ------------------------------------------------------------------------------
+# 6. QUICK START INSTALLATION COMMANDS
+# ------------------------------------------------------------------------------
+# 1. Install root workspace dependencies:
+#    npm install
+#
+# 2. Install backend dependencies:
+#    npm install --prefix backend
+#
+# 3. Install frontend dependencies:
+#    npm install --prefix frontend
+#
+# 4. Start full-stack development environment:
+#    npm run dev
+
