@@ -89,8 +89,17 @@ async function testRequirements() {
   // 3.) Login with unregistered email: "Invalid credentials. User not found."
   // 4.) Correct password: "faculty123" for all faculty emails present in database.
 
-  const [sampleFaculty] = await query('SELECT email FROM faculty LIMIT 1');
-  const facultyEmail = sampleFaculty.length > 0 ? sampleFaculty[0].email : 'abhishek.chopra24@example.com';
+  let [sampleFaculty] = await query('SELECT email FROM faculty LIMIT 1');
+  if (sampleFaculty.length === 0) {
+    const { hashPassword } = require('../utils/passwordHelper');
+    const passHash = await hashPassword('faculty123');
+    await query('INSERT INTO faculty (faculty_code, name, email, department, designation, max_duties) VALUES (?, ?, ?, ?, ?, ?)',
+      ['TESTFAC01', 'Dr. Test Faculty', 'test.faculty@bmu.edu.in', 'CSE', 'Assistant Professor', 4]);
+    await query('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, "FACULTY")',
+      ['Dr. Test Faculty', 'test.faculty@bmu.edu.in', passHash]);
+    [sampleFaculty] = await query('SELECT email FROM faculty LIMIT 1');
+  }
+  const facultyEmail = sampleFaculty[0].email;
 
   // Case 1: Faculty login with incorrect password
   total++;
