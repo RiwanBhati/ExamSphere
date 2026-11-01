@@ -1203,30 +1203,30 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                 </tr>
               </thead>
               <tbody>
-                {filteredByConfirmation.length === 0 ? (
+                {displayedRoster.length === 0 ? (
                   <tr>
                     <td colSpan={8} style={{ textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--text-muted)' }}>
                       <AlertCircle size={32} style={{ margin: '0 auto 0.75rem', color: '#6366f1', opacity: 0.8 }} />
                       <div style={{ fontWeight: 700, color: '#f3f4f6', fontSize: '1.05rem', marginBottom: '0.4rem' }}>
-                        {rosterConfirmationFilter === 'confirmed'
+                        {confirmationFilter === 'CONFIRMED'
                           ? 'No Confirmed Duties Found'
-                          : rosterConfirmationFilter === 'awaiting'
+                          : confirmationFilter === 'AWAITING'
                             ? 'No Unconfirmed Duties Awaiting Confirmation'
                             : rosterViewMode === 'history' 
                               ? 'No Past Duty Records Found' 
                               : 'No Current or Upcoming Exam Duties'}
                       </div>
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '480px', margin: '0 auto 1.25rem' }}>
-                        {rosterConfirmationFilter !== 'all'
-                          ? `There are currently no duties matching "${rosterConfirmationFilter === 'confirmed' ? 'Confirmed by Faculty' : 'Awaiting Faculty Confirmation'}".`
+                        {confirmationFilter !== 'ALL'
+                          ? `There are currently no duties matching "${confirmationFilter === 'CONFIRMED' ? 'Confirmed by Faculty' : 'Awaiting Faculty Confirmation'}".`
                           : rosterViewMode === 'history'
                             ? `There are no previous exam duties before ${formatDateReadable(currentDate)}. Previous dates will automatically appear here once their exam date has passed.`
                             : `There are no duties scheduled on or after ${formatDateReadable(currentDate)}. Use Assign Duties above to assign teachers manually or automatically.`}
                       </p>
-                      {rosterConfirmationFilter !== 'all' ? (
+                      {confirmationFilter !== 'ALL' ? (
                         <button
                           className="btn btn-secondary"
-                          onClick={() => setRosterConfirmationFilter('all')}
+                          onClick={() => setConfirmationFilter('ALL')}
                         >
                           <span>Show All Confirmation Statuses</span>
                         </button>
@@ -1241,7 +1241,7 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                     </td>
                   </tr>
                 ) : (
-                  filteredByConfirmation.map((duty) => {
+                  displayedRoster.map((duty) => {
                     const isSubstituted = duty.status === 'SUBSTITUTED';
                     const isConfirmed = duty.status === 'CONFIRMED' || duty.duty_status === 'CONFIRMED';
                     const dateStr = formatDateReadable(duty.exam_date);

@@ -25,8 +25,7 @@ const INGESTION_STRATEGIES = {
   students: async (rows) => {
     let count = 0;
     for (const row of rows) {
-      count++;
-      const importOrder = count;
+      const importOrder = count + 1;
       const finalSemester = parseSemester(row.semester || row.sem || row.term || row.stream_section || row.batch);
       const enrolledStr = row.enrolled_courses || row.enrolled_subjects || '';
       const [result] = await query(
