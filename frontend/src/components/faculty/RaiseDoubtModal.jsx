@@ -52,49 +52,30 @@ export default function RaiseDoubtModal({
       setLoading(true);
       try {
         const [eRes, rRes, fRes, sRes] = await Promise.all([
-          api.getExams().catch(() => ({ data: [] })),
-          api.getEntities('rooms').catch(() => ({ data: [] })),
-          api.getEntities('faculty').catch(() => ({ data: [] })),
-          api.getEntities('students').catch(() => ({ data: [] }))
+          api.getExams().catch(err => {
+            console.warn('api.getExams notice:', err.message);
+            return { data: [] };
+          }),
+          api.getEntities('rooms').catch(err => {
+            console.warn('api.getEntities rooms notice:', err.message);
+            return { data: [] };
+          }),
+          api.getEntities('faculty').catch(err => {
+            console.warn('api.getEntities faculty notice:', err.message);
+            return { data: [] };
+          }),
+          api.getEntities('students').catch(err => {
+            console.warn('api.getEntities students notice:', err.message);
+            return { data: [] };
+          })
         ]);
 
-        const examData = eRes.data || [];
-        let roomData = rRes.data || [];
-        const facData = fRes.data || [];
-        let studData = sRes.data || [];
+        const examData = Array.isArray(eRes?.data) ? eRes.data : [];
+        let roomData = Array.isArray(rRes?.data) ? rRes.data : [];
+        const facData = Array.isArray(fRes?.data) ? fRes.data : [];
+        const studData = Array.isArray(sRes?.data) ? sRes.data : [];
 
-        // If currentRoom is passed, make sure it is in roomData
-        if (currentRoom && (currentRoom.id || currentRoom.room_id)) {
-          const cId = currentRoom.id || currentRoom.room_id;
-          if (!roomData.some(r => String(r.id) === String(cId))) {
-            roomData = [{
-              id: cId,
-              room_number: currentRoom.room_number || 'Exam Hall',
-              building: currentRoom.building || 'Campus'
-            }, ...roomData];
-          }
-        }
-
-        // Merge roomStudents if provided (prioritized at top)
-        const combinedStudents = [];
-        if (roomStudents && roomStudents.length > 0) {
-          roomStudents.forEach(st => {
-            combinedStudents.push({
-              id: st.student_id || st.id,
-              name: st.student_name || st.name,
-              enrollment_no: st.enrollment_no || st.student_roll || '',
-              department: st.student_department || st.department || '',
-              seat_number: st.seat_number || ''
-            });
-          });
-        }
-        studData.forEach(st => {
-          if (!combinedStudents.some(s => String(s.id) === String(st.id))) {
-            combinedStudents.push(st);
-          }
-        });
-
-        // Ensure currentRoom is in rooms list
+        // 1. Prepare Room Options (Include currentRoom if passed)
         let finalRooms = [...roomData];
         const cRoomId = currentRoomId;
         if (cRoomId) {
@@ -102,14 +83,14 @@ export default function RaiseDoubtModal({
           if (!exists) {
             finalRooms.unshift({
               id: cRoomId,
-              room_number: currentRoom?.room_number || currentRoom?.name || cRoomId,
-              building: currentRoom?.building || ''
+              room_number: currentRoom?.room_number || currentRoom?.name || `Room ${cRoomId}`,
+              building: currentRoom?.building || 'Main Block'
             });
           }
         }
         setRooms(finalRooms);
 
-        // Ensure currentExam is in exams list
+        // 2. Prepare Exam Options (Include currentExam if passed)
         let finalExams = [...examData];
         const cExamId = currentExamId;
         if (cExamId) {
@@ -125,65 +106,87 @@ export default function RaiseDoubtModal({
         }
         setExams(finalExams);
 
+        // 3. Prepare Faculty List
         setFacultyList(facData);
 
-        // Prioritize classroom students if available, then fallback to master students
-        let finalStudents = [];
-        if (classroomStudents && classroomStudents.length > 0) {
-          finalStudents = classroomStudents.map(st => ({
-            id: st.student_id || st.id,
-            name: st.student_name || st.name,
-            enrollment_no: st.enrollment_no || st.student_roll || '',
-            department: st.student_department || st.department || '',
-            seat_number: st.seat_number || ''
-          }));
-        } else {
-          finalStudents = studData;
+        // 4. Prepare Students List
+        const combinedStudents = [];
+        if (Array.isArray(classroomStudents) && classroomStudents.length > 0) {
+          classroomStudents.forEach(st => {
+            combinedStudents.push({
+              id: st.student_id || st.id,
+              name: st.student_name || st.name,
+              enrollment_no: st.enrollment_no || st.student_roll || '',
+              department: st.student_department || st.department || '',
+              seat_number: st.seat_number || ''
+            });
+          });
         }
-        setStudents(finalStudents);
+        if (Array.isArray(studData)) {
+          studData.forEach(st => {
+            if (!combinedStudents.some(s => String(s.id) === String(st.id))) {
+              combinedStudents.push({
+                id: st.id,
+                name: st.name,
+                enrollment_no: st.enrollment_no || '',
+                department: st.department || '',
+                seat_number: ''
+              });
+            }
+          });
+        }
+        setStudents(combinedStudents);
 
-        // Pre-select defaults matching this invigilator's duty!
+        // 5. Pre-select Defaults Matching This Duty
         const defaultExamId = String(cExamId || (finalExams[0] ? finalExams[0].id : ''));
         const defaultRoomId = String(cRoomId || (finalRooms[0] ? finalRooms[0].id : ''));
 
-        // Find the selected exam object to locate the designated course instructor
+        // Find designated course instructor for this exam
         const selectedExam = finalExams.find(e => String(e.id) === String(defaultExamId));
-
-        // Resolve invigilator info so the invigilator is never confused with the recipient subject faculty
         const currentInvigId = invigilatorUser?.faculty_id || invigilatorUser?.facultyId || invigilatorUser?.id;
         const currentInvigName = invigilatorUser?.name || '';
         const eligibleFaculty = facData.filter(f => 
           (!currentInvigId || Number(f.id) !== Number(currentInvigId)) &&
           (!currentInvigName || f.name?.toLowerCase() !== currentInvigName.toLowerCase())
         );
+        const displayFaculty = eligibleFaculty.length > 0 ? eligibleFaculty : facData;
 
-        // Find designated course instructor for this exam
-        const designatedFaculty = eligibleFaculty.find(f => 
+        const designatedFaculty = displayFaculty.find(f => 
           (selectedExam?.course_coordinator_id && Number(f.id) === Number(selectedExam.course_coordinator_id)) ||
           (selectedExam?.course_coordinator_name && f.name?.toLowerCase() === selectedExam.course_coordinator_name?.toLowerCase())
-        ) || eligibleFaculty.find(f => 
-          selectedExam?.department && f.department === selectedExam.department
-        ) || eligibleFaculty[0] || facData[0];
+        ) || displayFaculty.find(f => 
+          (selectedExam?.department || selectedExam?.course_department) &&
+          f.department === (selectedExam?.department || selectedExam?.course_department)
+        ) || displayFaculty[0] || null;
 
-        const defaultFacultyId = designatedFaculty ? String(designatedFaculty.id) : '';
-        const defaultRecipientEmail = designatedFaculty?.email || '';
+        const defaultFacultyId = designatedFaculty ? String(designatedFaculty.id) : (facData[0] ? String(facData[0].id) : '');
+        const defaultRecipientEmail = designatedFaculty?.email || (facData[0] ? facData[0].email : '');
 
-        // Pre-select student: initialStudent > first classroom student > first master student
-        const defaultStudent = initialStudent || finalStudents[0] || null;
+        // Pre-select student scope: default to GENERAL (Entire Classroom) unless initialStudent passed
+        let defaultStudentId = 'GENERAL';
+        let defaultStudentRoll = 'GENERAL';
+        let defaultStudentName = 'General Room Question';
+
+        if (initialStudent) {
+          defaultStudentId = String(initialStudent.id || initialStudent.student_id || 'GENERAL');
+          defaultStudentRoll = initialStudent.enrollment_no || initialStudent.student_roll || 'GENERAL';
+          defaultStudentName = initialStudent.name || initialStudent.student_name || 'Student Candidate';
+        }
 
         setFormData({
           examId: defaultExamId,
           roomId: defaultRoomId,
-          studentId: defaultStudent ? String(defaultStudent.id || defaultStudent.student_id) : '',
-          studentRoll: defaultStudent ? (defaultStudent.enrollment_no || defaultStudent.student_roll || '') : '',
-          studentName: defaultStudent ? (defaultStudent.name || defaultStudent.student_name || '') : '',
+          studentId: defaultStudentId,
+          studentRoll: defaultStudentRoll,
+          studentName: defaultStudentName,
           facultyId: defaultFacultyId,
           recipientEmail: defaultRecipientEmail,
           urgency: 'HIGH',
           questionText: ''
         });
       } catch (err) {
-        setError('Failed to load exam master data for doubt routing.');
+        console.error('RaiseDoubtModal loadPrerequisites error:', err);
+        setError('Failed to load exam master data for doubt routing: ' + err.message);
       } finally {
         setLoading(false);
       }
@@ -527,11 +530,16 @@ export default function RaiseDoubtModal({
                   fontSize: '0.85rem'
                 }}
               >
-                {students.map(s => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} ({s.enrollment_no}{s.seat_number ? ` • Seat ${s.seat_number}` : ''}{s.department ? ` • ${s.department}` : ''})
-                  </option>
-                ))}
+                <option value="GENERAL">📢 General Room Question (Entire Classroom / Paper Ambiguity)</option>
+                {students.length > 0 && (
+                  <optgroup label="Room Candidates (Select if specific student)">
+                    {students.map(s => (
+                      <option key={s.id} value={s.id}>
+                        👤 {s.name} ({s.enrollment_no || 'No ID'}{s.seat_number ? ` • Seat ${s.seat_number}` : ''}{s.department ? ` • ${s.department}` : ''})
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
               </select>
             </div>
 
@@ -580,12 +588,11 @@ export default function RaiseDoubtModal({
                 fontSize: '0.85rem'
               }}
             >
-              {facultyList
-                .filter(f => {
-                  const currentInvigId = invigilatorUser?.faculty_id || invigilatorUser?.facultyId || invigilatorUser?.id;
-                  return !currentInvigId || Number(f.id) !== Number(currentInvigId);
-                })
-                .map(f => {
+              {(() => {
+                const currentInvigId = invigilatorUser?.faculty_id || invigilatorUser?.facultyId || invigilatorUser?.id;
+                const eligible = facultyList.filter(f => !currentInvigId || Number(f.id) !== Number(currentInvigId));
+                const listToDisplay = eligible.length > 0 ? eligible : facultyList;
+                return listToDisplay.map(f => {
                   const currentExamObj = exams.find(e => String(e.id) === String(formData.examId));
                   const isInstructor = currentExamObj && (Number(currentExamObj.course_coordinator_id) === Number(f.id));
                   return (
@@ -593,7 +600,8 @@ export default function RaiseDoubtModal({
                       {f.name} — {f.email} ({f.department}) {isInstructor ? '⭐ (Designated Course Instructor)' : ''}
                     </option>
                   );
-                })}
+                });
+              })()}
             </select>
           </div>
 

@@ -7,11 +7,13 @@ import {
   Plus, CheckSquare, XCircle, FileText, Sparkles, ExternalLink 
 } from 'lucide-react';
 import { api } from '../../api';
+import { useDemoTime } from '../../context/DemoTimeContext';
 import ResolveDoubtModal from './ResolveDoubtModal';
 import EmailNotificationModal from './EmailNotificationModal';
 import RaiseDoubtModal from './RaiseDoubtModal';
 
 export default function FacultyPortalView({ user }) {
+  const { demoDate, demoTime, isSlotActive } = useDemoTime();
   // Navigation tabs: 'duties' | 'doubts' | 'emails'
   // Default to 'duties' so teacher immediately sees their assigned invigilation duties
   const [activeTab, setActiveTab] = useState('duties');
@@ -399,6 +401,25 @@ export default function FacultyPortalView({ user }) {
                           <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                             {duty.start_time?.slice(0, 5)} - {duty.end_time?.slice(0, 5)} ({duty.duration_minutes} min)
                           </div>
+                          {isSlotActive(duty.exam_date, duty.start_time, duty.end_time) && (
+                            <span
+                              className="badge"
+                              style={{
+                                fontSize: '0.68rem',
+                                fontWeight: 800,
+                                background: 'rgba(239, 68, 68, 0.2)',
+                                color: '#f87171',
+                                border: '1px solid #f87171',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                                marginTop: '0.3rem'
+                              }}
+                            >
+                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f87171', display: 'inline-block' }} />
+                              LIVE IN-DUTY NOW
+                            </span>
+                          )}
                         </td>
                         <td style={{ padding: '1rem' }}>
                           <span style={{

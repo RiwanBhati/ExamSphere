@@ -27,8 +27,10 @@ import {
   HelpCircle
 } from 'lucide-react';
 import RaiseDoubtModal from './faculty/RaiseDoubtModal';
+import { useDemoTime } from '../context/DemoTimeContext';
 
 export default function InvigilatorPortalView({ user }) {
+  const { demoDate, demoTime, isSlotActive, formatDemoDate, formatDemoTime } = useDemoTime();
   const [activeSubTab, setActiveSubTab] = useState('duties'); // 'duties', 'verification'
   const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'table'
   const [duties, setDuties] = useState([]);
@@ -564,6 +566,17 @@ export default function InvigilatorPortalView({ user }) {
                 {new Set(duties.map((d) => d.room_id)).size}
               </div>
             </div>
+
+            <div className="card" style={{ padding: '1rem 1.25rem' }}>
+              <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', color: '#f87171', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Clock size={13} color="#f87171" />
+                <span>Live Active Now</span>
+              </div>
+              <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#f87171', marginTop: '0.2rem' }}>
+                {duties.filter((d) => isSlotActive(d.exam_date, d.start_time, d.end_time)).length}
+              </div>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>At demo time {demoTime}</span>
+            </div>
           </div>
 
           {/* Duties List */}
@@ -637,6 +650,24 @@ export default function InvigilatorPortalView({ user }) {
                           >
                             {isConfirmed ? '✓ CONFIRMED' : '⏳ ASSIGNED - CONFIRMATION REQUIRED'}
                           </span>
+                          {isSlotActive(duty.exam_date, duty.start_time, duty.end_time) && (
+                            <span
+                              className="badge"
+                              style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                background: 'rgba(239, 68, 68, 0.2)',
+                                color: '#f87171',
+                                border: '1px solid #f87171',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem'
+                              }}
+                            >
+                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f87171', display: 'inline-block' }} />
+                              LIVE ACTIVE NOW
+                            </span>
+                          )}
                           <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                             Building: {duty.building || 'Main Block'}
                           </span>

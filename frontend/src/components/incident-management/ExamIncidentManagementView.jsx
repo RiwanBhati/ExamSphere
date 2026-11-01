@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../api';
+import { useDemoTime } from '../../context/DemoTimeContext';
 import { 
   FileText, Camera, Upload, Eye, CheckCircle2, 
   Clock, UserCheck, Printer, Search, Plus, X, 
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function ExamIncidentManagementView({ user, onNavigateToStep }) {
+  const { demoDate, demoTime, formatDemoTime } = useDemoTime();
   const isFaculty = user && user.role === 'FACULTY';
   const isAdmin = !isFaculty;
 
@@ -47,8 +49,8 @@ export default function ExamIncidentManagementView({ user, onNavigateToStep }) {
     student_name: '',
     student_roll: '',
     student_dept: 'CSE',
-    incident_date: new Date().toISOString().split('T')[0],
-    incident_time: '10:00 AM',
+    incident_date: demoDate,
+    incident_time: formatDemoTime(),
     material_confiscated: '',
     incident_details: '',
     student_statement: '',
@@ -522,8 +524,8 @@ export default function ExamIncidentManagementView({ user, onNavigateToStep }) {
       student_name: '',
       student_roll: '',
       student_dept: 'Computer Science & Engineering',
-      incident_date: new Date().toISOString().split('T')[0],
-      incident_time: '10:00 AM',
+      incident_date: demoDate,
+      incident_time: formatDemoTime(),
       material_confiscated: '',
       incident_details: '',
       student_statement: '',

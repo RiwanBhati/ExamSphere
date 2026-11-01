@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDemoTime } from '../../context/DemoTimeContext';
 import { 
   Calendar, Clock, Sun, Moon, Sunrise, BookOpen, 
   Users, AlertCircle, Edit, Trash2, CheckCircle2 
@@ -49,6 +50,7 @@ const getSlotTimeDisplay = (examsInSlot, defaultRange, stdStart = '09:30', stdEn
 };
 
 export default function TimetableCalendarGrid({ matrix, onEditExam, onDeleteExam }) {
+  const { demoDate, demoTime, isSlotActive } = useDemoTime();
   if (!matrix || !matrix.dates || matrix.dates.length === 0) {
     return (
       <div 
@@ -266,12 +268,15 @@ export default function TimetableCalendarGrid({ matrix, onEditExam, onDeleteExam
           year: 'numeric'
         });
 
+        const isCurrentDemoDay = (dateStr === demoDate);
+
         return (
           <div
             key={dateStr}
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid var(--border-subtle)',
+              background: isCurrentDemoDay ? 'rgba(6, 182, 212, 0.04)' : 'rgba(255, 255, 255, 0.02)',
+              border: isCurrentDemoDay ? '1px solid rgba(6, 182, 212, 0.45)' : '1px solid var(--border-subtle)',
+              boxShadow: isCurrentDemoDay ? '0 0 20px rgba(6, 182, 212, 0.12)' : 'none',
               borderRadius: '14px',
               padding: '1.25rem',
               display: 'flex',
@@ -290,10 +295,28 @@ export default function TimetableCalendarGrid({ matrix, onEditExam, onDeleteExam
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <Calendar size={18} color="var(--primary)" />
-                <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f3f4f6' }}>
+                <Calendar size={18} color={isCurrentDemoDay ? '#38bdf8' : 'var(--primary)'} />
+                <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: isCurrentDemoDay ? '#38bdf8' : '#f3f4f6' }}>
                   {formattedDateTitle}
                 </h4>
+                {isCurrentDemoDay && (
+                  <span
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      padding: '0.15rem 0.55rem',
+                      borderRadius: '6px',
+                      background: 'rgba(6, 182, 212, 0.2)',
+                      color: '#38bdf8',
+                      border: '1px solid rgba(6, 182, 212, 0.4)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem'
+                    }}
+                  >
+                    ⚡ Current Demo Day
+                  </span>
+                )}
                 <span
                   style={{
                     fontSize: '0.72rem',
@@ -309,7 +332,7 @@ export default function TimetableCalendarGrid({ matrix, onEditExam, onDeleteExam
                 </span>
               </div>
 
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)', fontFamily: 'monospace' }}>
+              <span style={{ fontSize: '0.78rem', color: isCurrentDemoDay ? '#38bdf8' : 'var(--text-dim)', fontFamily: 'monospace', fontWeight: isCurrentDemoDay ? 700 : 400 }}>
                 {dateStr}
               </span>
             </div>
