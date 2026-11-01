@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api';
+import { useDemoTime } from '../../context/DemoTimeContext';
 import { 
   Users, Scale, Award, RefreshCw, Sparkles, 
   Trash2, UserCheck, ShieldAlert, CheckCircle2, UserX, AlertCircle, Clock 
 } from 'lucide-react';
 
 export default function WorkloadBalancerView() {
+  const { isSlotActive, demoDate, demoTime } = useDemoTime();
   const [roster, setRoster] = useState([]);
   const [workload, setWorkload] = useState(null);
   const [facultyList, setFacultyList] = useState([]);
@@ -277,6 +279,11 @@ export default function WorkloadBalancerView() {
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                           {duty.start_time?.substring(0, 5)} - {duty.end_time?.substring(0, 5)}
                         </span>
+                        {isSlotActive(duty.exam_date, duty.start_time, duty.end_time) && (
+                          <span className="badge" style={{ marginTop: '0.2rem', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid #f87171', fontSize: '0.66rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#f87171', display: 'inline-block' }} /> Live Now
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td>

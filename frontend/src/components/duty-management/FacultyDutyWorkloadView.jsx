@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api';
+import { useDemoTime } from '../../context/DemoTimeContext';
 import { 
   Users, Scale, Calendar, Clock, RefreshCw, 
   Trash2, UserCheck, CheckCircle2, UserX, AlertCircle, Plus, 
@@ -225,20 +226,15 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
   const [rosterSearch, setRosterSearch] = useState('');
   const [filterDept, setFilterDept] = useState('ALL');
 
-  // Drive live roster labels and status from the browser's local clock.
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 15_000);
-    return () => window.clearInterval(timer);
-  }, []);
-  const [demoMode, setDemoMode] = useState(false);
-  const [demoDate, setDemoDate] = useState(() => normalizeDate(new Date()));
-  const [demoTime, setDemoTime] = useState(() => {
-    const date = new Date();
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  });
-  const currentDate = demoMode ? demoDate : normalizeDate(now);
-  const currentMinutes = demoMode ? timeToMinutes(demoTime) : now.getHours() * 60 + now.getMinutes();
+  // Drive live roster labels and status globally from the Demo Time Context.
+  const {
+    demoDate,
+    demoTime,
+    setDemoDate,
+    setDemoTime,
+    currentDate,
+    currentMinutes
+  } = useDemoTime();
 
   // Leave / On-Duty Status Map: { [facultyId]: true if on leave }
   const [facultyLeaveMap, setFacultyLeaveMap] = useState({});
@@ -250,9 +246,9 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
     }));
   };
 
-  // Availability Checker starts on the real local date; its selected slot remains an editable query.
+  // Availability Checker starts on the global demo date; its selected slot remains an editable query.
   const [availParams, setAvailParams] = useState(() => ({
-    exam_date: normalizeDate(new Date()),
+    exam_date: currentDate,
     start_time: '09:30',
     end_time: '12:30'
   }));
@@ -907,17 +903,17 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
 
         <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '1rem' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-            <Clock size={13} color="#f87171" /> {demoMode ? 'Active at Demo Time' : 'Active In-Duty Now'}
+            <Clock size={13} color="#f87171" /> Active In-Duty Now
           </span>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: totalActiveNow > 0 ? '#f87171' : '#f3f4f6', marginTop: '0.2rem' }}>
             {totalActiveNow} Invigilating
           </div>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>During current slot window</span>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>During current slot window ({demoTime})</span>
         </div>
 
         <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '1rem' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-            <CheckCircle2 size={13} color="#34d399" /> {demoMode ? 'Completed on Demo Day' : 'Completed Today'}
+            <CheckCircle2 size={13} color="#34d399" /> Completed Today
           </span>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#34d399', marginTop: '0.2rem' }}>
             {totalCompletedToday} Completed
@@ -927,7 +923,7 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
 
         <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '1rem' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-            <Calendar size={13} color="#a855f7" /> {demoMode ? 'Demo Day Load' : "Today's Total Load"}
+            <Calendar size={13} color="#a855f7" /> Today&apos;s Total Load
           </span>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#a855f7', marginTop: '0.2rem' }}>
             {totalDutiesToday} Duties
@@ -999,7 +995,7 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                   ? `Showing Past Duties History (Completed examinations prior to ${formatDateReadable(currentDate)})`
                   : rosterViewMode === 'all'
                     ? 'Showing all invigilation duty records across the academic calendar'
-                    : `${demoMode ? 'Showing Demo Date' : 'Showing Current Day'} (${formatDateReadable(currentDate)}) & Upcoming Duties sorted chronologically`}
+                    : `Showing Demo Date (${formatDateReadable(currentDate)}) & Upcoming Duties sorted chronologically`}
               </p>
             </div>
 
@@ -1157,34 +1153,28 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
               </div>
             </div>
 
-            {/* Current Reference Date (Allows user to test e.g. "suppose current date is 20") */}
+            {/* Global Simulated Demo Time Controls */}
             <div className="duty-roster-live-time" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.8rem' }}>
-              <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Live local time</span>
-              <span className="live-date-chip" aria-live="off">
-                {now.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
-                <span aria-hidden="true">·</span>
-                {now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+              <span style={{ color: '#38bdf8', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Clock size={13} color="#38bdf8" />
+                <span>Simulated Demo Clock:</span>
               </span>
-              <label className="demo-clock-toggle">
-                <input type="checkbox" checked={demoMode} onChange={(event) => setDemoMode(event.target.checked)} />
-                <span>Demo time</span>
-              </label>
-              {demoMode && (
-                <div className="demo-clock-controls" aria-label="Set demo date and time">
-                  <input
-                    aria-label="Demo date"
-                    type="date"
-                    value={demoDate}
-                    onChange={(event) => setDemoDate(event.target.value)}
-                  />
-                  <input
-                    aria-label="Demo time"
-                    type="time"
-                    value={demoTime}
-                    onChange={(event) => setDemoTime(event.target.value)}
-                  />
-                </div>
-              )}
+              <div className="demo-clock-controls" aria-label="Global simulated date and time">
+                <input
+                  aria-label="Demo date"
+                  type="date"
+                  value={demoDate}
+                  onChange={(event) => setDemoDate(event.target.value)}
+                  title="Global Demo Date (Active on all pages)"
+                />
+                <input
+                  aria-label="Demo time"
+                  type="time"
+                  value={demoTime}
+                  onChange={(event) => setDemoTime(event.target.value)}
+                  title="Global Demo Time (Active on all pages)"
+                />
+              </div>
             </div>
           </div>
 
@@ -1197,7 +1187,7 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                   <th>Room</th>
                   <th>Assigned Teacher</th>
                   <th>Confirmation Status</th>
-                  <th>Duty Progress ({demoMode ? 'Demo' : 'Live'})</th>
+                  <th>Duty Progress</th>
                   <th>Daily Load</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
@@ -1278,7 +1268,7 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                               <span style={{ fontWeight: 600, color: '#e5e7eb' }}>{dateStr}</span>
                               {isToday && (
                                 <span className="badge badge-emerald" style={{ fontSize: '0.65rem', padding: '0.15rem 0.45rem', fontWeight: 700 }}>
-                                  {demoMode ? 'Demo day' : 'Today'}
+                                  Active Day
                                 </span>
                               )}
                               {isPast && (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { LogOut, Layers } from 'lucide-react';
+import GlobalDemoClock from './common/GlobalDemoClock';
 
 export default function Navbar({
   user,
@@ -16,6 +17,11 @@ export default function Navbar({
           <h1>ExamSphere</h1>
           <p>Examination management</p>
         </div>
+      </div>
+
+      {/* Global Simulated Demo Time Controller (Active across entire application) */}
+      <div className="header-center-controls">
+        <GlobalDemoClock />
       </div>
 
       <div className="header-actions">

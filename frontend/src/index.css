@@ -1908,23 +1908,6 @@ textarea:focus,
   font-variant-numeric: tabular-nums;
 }
 
-.demo-clock-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 7px;
-  color: var(--text-main);
-  background: #1b2531;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.demo-clock-toggle input {
-  accent-color: #6c9ed1;
-}
-
 .demo-clock-controls {
   display: inline-flex;
   gap: 0.4rem;
@@ -1943,13 +1926,25 @@ textarea:focus,
   font-size: 0.78rem;
 }
 
-.demo-clock-controls input:focus-visible,
-.demo-clock-toggle:focus-within {
+.demo-clock-controls input:focus-visible {
   outline: 2px solid #6c9ed1;
   outline-offset: 2px;
 }
 
+.header-center-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 900px) {
+  .header-center-controls {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+
   .duty-roster-toolbar {
     flex-basis: 100%;
     justify-content: flex-start;

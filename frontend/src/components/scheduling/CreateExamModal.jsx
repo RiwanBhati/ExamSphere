@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDemoTime } from '../../context/DemoTimeContext';
 import { 
   X, Calendar, Clock, AlertTriangle, CheckCircle2, 
   BookOpen, Sparkles, AlertCircle, Info, ShieldAlert,
@@ -41,6 +42,7 @@ const formatDurationLabel = (mins) => {
 };
 
 export default function CreateExamModal({ isOpen, onClose, onSuccess, initialExam = null, courses = [], onOpenGenerateTimetable = null, timetableSpan = null }) {
+  const { demoDate, demoTime } = useDemoTime();
   const isEdit = Boolean(initialExam && initialExam.id);
 
   const [formData, setFormData] = useState({
@@ -108,12 +110,10 @@ export default function CreateExamModal({ isOpen, onClose, onSuccess, initialExa
         setSelectedSlotPreset('CUSTOM');
       }
     } else {
-      // Default to start date of session or 5 days in the future
-      let defaultDate = timetableSpan?.startDate;
+      // Default to start date of session or active demo date
+      let defaultDate = timetableSpan?.startDate || demoDate;
       if (!defaultDate) {
-        const d = new Date();
-        d.setDate(d.getDate() + 5);
-        defaultDate = d.toISOString().split('T')[0];
+        defaultDate = '2026-11-06';
       }
 
       const firstCourse = courses[0];
