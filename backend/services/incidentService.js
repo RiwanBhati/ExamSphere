@@ -8,6 +8,16 @@ class IncidentService {
    * Submit an Unfair Means (UFM) report
    */
   async createReport(data) {
+    // The login id belongs to `users`; ufm_reports.invigilator_id references
+    // `faculty`. Resolve that relationship by email instead of trusting the
+    // client-supplied id (which otherwise violates the foreign key).
+    let facultyRecord = null;
+    if (data.submitted_by_email) {
+      try {
+        const [facultyRows] = await query('SELECT id, name, department FROM faculty WHERE LOWER(email) = LOWER(?) LIMIT 1', [data.submitted_by_email]);
+        facultyRecord = facultyRows?.[0] || null;
+      } catch {}
+    }
     const reportNumber = `UFM-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`;
     const newRecord = {
       id: Date.now(),
@@ -22,9 +32,10 @@ class IncidentService {
       room_id: Number(data.room_id) || null,
       room_number: data.room_number || '',
       desk_number: data.desk_number || '',
-      invigilator_id: Number(data.invigilator_id) || null,
-      invigilator_name: data.invigilator_name || 'Invigilator',
-      invigilator_department: data.invigilator_department || 'Faculty',
+      invigilator_id: facultyRecord?.id || (data.submitted_by_email ? null : (Number(data.invigilator_id) || null)),
+      invigilator_name: facultyRecord?.name || data.submitted_by_name || data.invigilator_name || 'Invigilator',
+      invigilator_department: facultyRecord?.department || data.invigilator_department || 'Faculty',
+      submitted_by_email: data.submitted_by_email || null,
       incident_date: data.incident_date || new Date().toISOString().split('T')[0],
       incident_time: data.incident_time || '10:00 AM',
       incident_type: data.incident_type || 'UNAUTHORIZED_NOTES',
@@ -42,22 +53,22 @@ class IncidentService {
       created_at: new Date().toISOString()
     };
 
-    // Try persisting to MySQL if available
+    // Persist reports so they are visible across faculty and admin sessions.
     try {
       const fullSql = `
         INSERT INTO ufm_reports (
           report_number, exam_id, exam_name, course_code, student_id, student_name,
           student_roll, student_dept, room_id, room_number, desk_number, invigilator_id,
-          invigilator_name, invigilator_department, incident_date, incident_time,
+          invigilator_name, invigilator_department, submitted_by_email, incident_date, incident_time,
           incident_type, severity, material_confiscated, incident_details,
           student_statement, witness_name, evidence_photo_url, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const [result] = await query(fullSql, [
         newRecord.report_number, newRecord.exam_id, newRecord.exam_name, newRecord.course_code,
         newRecord.student_id, newRecord.student_name, newRecord.student_roll, newRecord.student_dept,
         newRecord.room_id, newRecord.room_number, newRecord.desk_number, newRecord.invigilator_id,
-        newRecord.invigilator_name, newRecord.invigilator_department, newRecord.incident_date, newRecord.incident_time,
+        newRecord.invigilator_name, newRecord.invigilator_department, newRecord.submitted_by_email, newRecord.incident_date, newRecord.incident_time,
         newRecord.incident_type, newRecord.severity, newRecord.material_confiscated, newRecord.incident_details,
         newRecord.student_statement, newRecord.witness_name, newRecord.evidence_photo_url, 'REPORTED'
       ]);
@@ -65,30 +76,8 @@ class IncidentService {
         newRecord.id = result.insertId;
       }
     } catch (err) {
-      // Fallback to legacy basic schema if database has initial schema
-      try {
-        const legacySql = `
-          INSERT INTO ufm_reports (
-            exam_id, student_id, room_id, invigilator_id, incident_details,
-            evidence_photo_url, student_statement, status
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        const [result] = await query(legacySql, [
-          newRecord.exam_id || 1,
-          newRecord.student_id || 1,
-          newRecord.room_id || 1,
-          newRecord.invigilator_id || 1,
-          `${newRecord.report_number} | ${newRecord.incident_type} | ${newRecord.material_confiscated} | ${newRecord.incident_details}`,
-          (newRecord.evidence_photo_url || '').slice(0, 255),
-          newRecord.student_statement,
-          'REPORTED'
-        ]);
-        if (result && result.insertId) {
-          newRecord.id = result.insertId;
-        }
-      } catch (legacyErr) {
-        console.warn('MySQL persistence note for UFM report:', legacyErr.message);
-      }
+      // Keep local/demo mode usable while surfacing persistence failures in logs.
+      console.warn('MySQL persistence note for UFM report:', err.message);
     }
 
     inMemoryIncidents.unshift(newRecord);
@@ -125,6 +114,10 @@ class IncidentService {
 
       const [dbRows] = await query(sql, params);
       results = dbRows || [];
+      // Include local demo submissions while the database is unavailable or
+      // when the app is running in a mixed demo environment.
+      const knownIds = new Set(results.map(row => String(row.id)));
+      results = [...results, ...inMemoryIncidents.filter(row => !knownIds.has(String(row.id)))];
     } catch (e) {
       // Fallback to in-memory store if DB query fails
       results = [...inMemoryIncidents];
@@ -156,9 +149,10 @@ class IncidentService {
   /**
    * Get reports submitted by a specific faculty member (For Faculty Portal)
    */
-  async getReportsByFaculty(facultyName, facultyId) {
+  async getReportsByFaculty(facultyName, facultyId, facultyEmail) {
     const all = await this.getAllReports();
     return all.filter(r => {
+      if (facultyEmail && r.submitted_by_email && r.submitted_by_email.toLowerCase() === facultyEmail.toLowerCase()) return true;
       if (facultyId && Number(r.invigilator_id) === Number(facultyId)) return true;
       if (facultyName && r.invigilator_name && r.invigilator_name.toLowerCase().includes(facultyName.toLowerCase())) return true;
       return false;

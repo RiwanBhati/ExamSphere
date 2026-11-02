@@ -423,6 +423,18 @@ export const api = {
     });
   },
 
+  // Admin emergency broadcast and delivery history
+  getBroadcastLogs() {
+    return this.request('/broadcast/logs');
+  },
+
+  sendEmergencyRoomChange(data) {
+    return this.request('/broadcast/emergency-room-change', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
   // Module 7: Invigilator Portal & Attendance
   getInvigilatorDuties(facultyId = null) {
     const query = facultyId ? `?faculty_id=${encodeURIComponent(facultyId)}` : '';

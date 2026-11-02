@@ -501,16 +501,8 @@ export default function ExamIncidentManagementView({ user, onNavigateToStep }) {
         alert(`Case report ${res.data.report_number} submitted successfully!`);
       }
     } catch (err) {
-      const localId = Date.now();
-      const localReport = {
-        id: localId,
-        report_number: `UFM-2026-${String(localId).slice(-3)}`,
-        ...reportData,
-        status: 'SUBMITTED',
-        created_at: new Date().toISOString()
-      };
-      setIncidents(prev => [localReport, ...prev]);
-      alert(`Case report ${localReport.report_number} submitted successfully!`);
+      alert(`Report could not be submitted: ${err.message}`);
+      return;
     }
 
     // Reset Form

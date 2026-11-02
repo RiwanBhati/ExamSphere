@@ -53,6 +53,29 @@ async function runMigration() {
   await ensureColumn('exams', 'registered_students_count', 'INT DEFAULT 0');
   await ensureColumn('exams', 'required_rooms_count', 'INT DEFAULT 1');
 
+  // Faculty reports may be submitted when no exam is currently scheduled.
+  await ensureColumn('ufm_reports', 'submitted_by_email', 'VARCHAR(120) NULL');
+  try {
+    await query('ALTER TABLE ufm_reports MODIFY COLUMN exam_id INT NULL');
+  } catch (err) {
+    console.warn('UFM report schema note:', err.message);
+  }
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS broadcast_logs (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      recipient_email VARCHAR(120) NOT NULL,
+      subject VARCHAR(200) NOT NULL,
+      message TEXT NOT NULL,
+      delivery_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+      provider VARCHAR(50) NULL,
+      error_message TEXT NULL,
+      sent_by_email VARCHAR(120) NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      sent_at TIMESTAMP NULL
+    )
+  `);
+
   // 6. Ensure course_section_instructors table exists
   await query(`
     CREATE TABLE IF NOT EXISTS course_section_instructors (

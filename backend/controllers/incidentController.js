@@ -5,7 +5,11 @@ const incidentService = require('../services/incidentService');
  */
 async function submitReport(req, res, next) {
   try {
-    const report = await incidentService.createReport(req.body);
+    const report = await incidentService.createReport({
+      ...req.body,
+      submitted_by_email: req.user?.email || null,
+      submitted_by_name: req.user?.name || null
+    });
     return res.status(201).json({
       success: true,
       message: `Unfair Means (UFM) report ${report.report_number} successfully submitted.`,
@@ -22,6 +26,10 @@ async function submitReport(req, res, next) {
 async function getReports(req, res, next) {
   try {
     const { status, severity, incident_type, search, facultyName, facultyId } = req.query;
+    if (req.user?.role === 'FACULTY') {
+      const facultyReports = await incidentService.getReportsByFaculty(req.user.name, req.user.faculty_id, req.user.email);
+      return res.status(200).json({ success: true, data: facultyReports });
+    }
     
     // If faculty query specified, filter for faculty
     if (facultyName || facultyId) {
@@ -54,6 +62,11 @@ async function getReports(req, res, next) {
 async function getReportById(req, res, next) {
   try {
     const report = await incidentService.getReportById(req.params.id);
+    if (req.user?.role === 'FACULTY') {
+      const ownsReport = (report.submitted_by_email && report.submitted_by_email.toLowerCase() === String(req.user.email || '').toLowerCase()) ||
+        (req.user.faculty_id && Number(report.invigilator_id) === Number(req.user.faculty_id));
+      if (!ownsReport) return res.status(403).json({ success: false, message: 'You can only view reports submitted by your account.' });
+    }
     return res.status(200).json({
       success: true,
       data: report
