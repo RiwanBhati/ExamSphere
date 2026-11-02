@@ -328,7 +328,7 @@ CREATE TABLE IF NOT EXISTS exam_scheduling_discussions (
 CREATE TABLE IF NOT EXISTS ufm_reports (
     id INT AUTO_INCREMENT PRIMARY KEY,
     report_number VARCHAR(50) NOT NULL UNIQUE,
-    exam_id INT NOT NULL,
+    exam_id INT NULL,
     exam_name VARCHAR(150) NULL,
     course_code VARCHAR(50) NULL,
     student_id INT NULL,
@@ -341,6 +341,7 @@ CREATE TABLE IF NOT EXISTS ufm_reports (
     invigilator_id INT NULL,
     invigilator_name VARCHAR(120) NOT NULL,
     invigilator_department VARCHAR(100) NULL,
+    submitted_by_email VARCHAR(120) NULL,
     incident_date DATE NOT NULL,
     incident_time VARCHAR(20) NULL,
     incident_type ENUM('UNAUTHORIZED_NOTES', 'MOBILE_DEVICE', 'SMARTWATCH_DEVICE', 'COPYING_NEIGHBOR', 'IMPERSONATION', 'COMMUNICATION', 'OTHER') NOT NULL,
@@ -402,6 +403,19 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     sent_at TIMESTAMP NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS broadcast_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    recipient_email VARCHAR(120) NOT NULL,
+    subject VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    delivery_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    provider VARCHAR(50) NULL,
+    error_message TEXT NULL,
+    sent_by_email VARCHAR(120) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sent_at TIMESTAMP NULL
 );
 
 -- --------------------------------------------------------------------

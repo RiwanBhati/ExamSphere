@@ -1,4 +1,5 @@
 const { query } = require('../config/db');
+const incidentService = require('./incidentService');
 
 /**
  * Module 10: Analytics & Reports Service
@@ -164,66 +165,33 @@ class AnalyticsService {
    * Cheating incident cases breakdown by review status and hall distribution
    */
   async getUFMSummary() {
-    const [[{ totalCases }]] = await query('SELECT COUNT(*) as totalCases FROM ufm_reports');
-    
-    // Breakdown by review status
-    const [statusRows] = await query(`
-      SELECT status, COUNT(*) as count 
-      FROM ufm_reports 
-      GROUP BY status
-    `);
-
     const statusBreakdown = {
       REPORTED: 0,
       UNDER_REVIEW: 0,
       ACTION_TAKEN: 0,
       DISMISSED: 0
     };
-
-    statusRows.forEach(row => {
-      if (statusBreakdown.hasOwnProperty(row.status)) {
-        statusBreakdown[row.status] = Number(row.count);
-      }
+    const reports = await incidentService.getAllReports();
+    reports.forEach(report => {
+      if (Object.hasOwn(statusBreakdown, report.status)) statusBreakdown[report.status] += 1;
     });
 
-    // Recent cases list with student and exam details
-    const [cases] = await query(`
-      SELECT 
-        u.id,
-        u.incident_details,
-        u.status,
-        u.created_at,
-        u.evidence_photo_url,
-        s.name as student_name,
-        s.enrollment_no,
-        s.department as student_department,
-        r.room_number,
-        f.name as invigilator_name,
-        e.exam_name
-      FROM ufm_reports u
-      LEFT JOIN students s ON u.student_id = s.id
-      LEFT JOIN rooms r ON u.room_id = r.id
-      LEFT JOIN faculty f ON u.invigilator_id = f.id
-      LEFT JOIN exams e ON u.exam_id = e.id
-      ORDER BY u.created_at DESC
-      LIMIT 20
-    `);
-
     return {
-      totalCases: Number(totalCases),
+      totalCases: reports.length,
       statusBreakdown,
-      cases: cases.map(c => ({
-        id: c.id,
-        studentName: c.student_name || 'Candidate',
-        enrollmentNo: c.enrollment_no || 'N/A',
-        department: c.student_department || 'General',
-        roomNumber: c.room_number || 'Hall',
-        invigilatorName: c.invigilator_name || 'Invigilator',
-        examName: c.exam_name || 'Exam',
-        incidentDetails: c.incident_details,
-        status: c.status,
-        hasPhoto: Boolean(c.evidence_photo_url),
-        reportedAt: c.created_at
+      cases: reports.slice(0, 20).map(report => ({
+        id: report.id,
+        reportNumber: report.report_number || `UFM-${report.id}`,
+        studentName: report.student_name || 'Candidate',
+        enrollmentNo: report.student_roll || 'N/A',
+        department: report.student_dept || 'General',
+        roomNumber: report.room_number || 'Hall',
+        invigilatorName: report.invigilator_name || 'Invigilator',
+        examName: report.exam_name || 'Exam',
+        incidentDetails: report.incident_details,
+        status: report.status,
+        hasPhoto: Boolean(report.evidence_photo_url),
+        reportedAt: report.created_at
       }))
     };
   }

@@ -335,6 +335,12 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
   const queryDate = normalizeDate(availParams.exam_date);
   const querySlotStart = timeToMinutes(availParams.start_time);
   const querySlotEnd = timeToMinutes(availParams.end_time);
+  const isStillInDailyLoad = (duty) => {
+    const dutyDate = normalizeDate(duty.exam_date);
+    if (dutyDate > currentDate) return true;
+    if (dutyDate < currentDate) return false;
+    return timeToMinutes(duty.end_time) > currentMinutes;
+  };
 
   // Compute live statistics dynamically (deduplicating by faculty name to avoid duplicate options):
   const uniqueFacultyMap = new Map();
@@ -382,7 +388,9 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
       }
     });
 
-    const todayDutiesCount = todayDuties.length;
+    // Completed slots stop consuming the faculty member's daily load. Keep
+    // duties on future dates counted, and count today's active/upcoming slots.
+    const todayDutiesCount = todayDuties.filter(isStillInDailyLoad).length;
     const isAtCapacity = todayDutiesCount >= max;
 
     // Time clash check for current queried slot
@@ -1249,7 +1257,8 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                     // Daily duties for this teacher on this exam's date (resets to 0/4 on day change)
                     const teacherDutiesOnDate = roster.filter(d => 
                       Number(d.faculty_id) === Number(duty.faculty_id) && 
-                      normalizeDate(d.exam_date) === normalizeDate(duty.exam_date)
+                      normalizeDate(d.exam_date) === normalizeDate(duty.exam_date) &&
+                      isStillInDailyLoad(d)
                     ).length;
 
                     return (
@@ -1396,7 +1405,7 @@ export default function FacultyDutyWorkloadView({ user, onNavigateToStep }) {
                             </span>
                           )}
                         </td>
-                        {/* Teacher Daily Load (Resets to 0/4 on day change) */}
+                        {/* Remaining daily load: completed duty slots are no longer counted. */}
                         <td>
                           <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#f3f4f6' }}>
                             {teacherDutiesOnDate} / {duty.max_duties || 4} duties
