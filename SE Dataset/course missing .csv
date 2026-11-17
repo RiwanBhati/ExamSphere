@@ -1,0 +1,45 @@
+course_code,course_name,semester,difficulty_level
+CSE2001,Data Structures and Algorithms,Sem 3,4
+CSE2002,Object Oriented Programming,3,3
+CSE2003,Discrete Mathematics,Sem 3,4
+CSE2004,Computer Organization and Architecture,Sem 3,4
+CSE2005,Digital Logic Design,Sem 3,3
+ECE2001,Digital Electronics,Sem 3,4
+ECE2002,Network Analysis,Sem 3,4
+ECE2003,Analog Electronics,Sem 3,4
+ME2001,Engineering Mechanics,Sem 3,3
+ME2002,Fluid Mechanics,Sem 3,4
+ME2003,Engineering Materials,Sem 3,3
+CSE3002,Database Management Systems,Sem 4,4
+CSE3005,Software Engineering,Sem 4,3
+CSE3010,Operating Systems,4,4
+CSE3015,Computer Networks,Sem 4,3
+CSE3020,Design and Analysis of Algorithms,Sem 4,5
+ECE2005,Signals and Systems,Sem 4,5
+ECE2006,Microprocessors and Microcontrollers,Sem 4,4
+ECE2007,Communication Systems,Sem 4,4
+ME1001,Thermodynamics,Sem 4,5
+ME2005,Strength of Materials,Sem 4,4
+ME2006,Kinematics of Machines,Sem 4,4
+CSE3025,Theory of Computation,Sem 5,5
+CSE3030,Compiler Design,Sem 5,4
+CSE3035,Artificial Intelligence,Sem 5,4
+CSE3040,Web Technologies,Sem 5,2
+CSE3045,Information Security,Sem 5,3
+ECE3001,VLSI Design,Sem 5,5
+ECE3002,Digital Signal Processing,Sem 5,5
+ECE3003,Control Systems,Sem 5,4
+ME3001,Heat and Mass Transfer,Sem 5,4
+ME3002,Machine Design,Sem 5,4
+ME3003,Manufacturing Processes,Sem 5,3
+CSE4001,Machine Learning,Sem 6,4
+CSE4002,Cloud Computing,Sem 6,3
+CSE4003,Big Data Analytics,Sem 6,4
+CSE4004,Mobile Application Development,Sem 6,2
+CSE4005,Distributed Systems,Sem 6,5
+ECE3010,Embedded Systems,Sem 6,4
+ECE3011,Wireless Communication,Sem 6,4
+ECE3012,Antenna and Wave Propagation,Sem 6,5
+ME3010,Refrigeration and Air Conditioning,Sem 6,3
+ME3011,Dynamics of Machinery,Sem 6,5
+ME3012,CAD/CAM,Sem 6,3

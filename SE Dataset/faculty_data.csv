@@ -1,0 +1,101 @@
+faculty_code,name,email,department,designation,max_duties
+FAC001,Dr. Harsh Taneja,harsh@example.com,ECE,Associate Professor,4
+FAC002,Dr. Nishtha Phutela,nishtha@example.com,CSE,Assistant Professor,5
+FAC003,Dr. Priya Nair,priya@example.com,ECE,Associate Professor,5
+FAC004,Dr. Rajesh Sharma,rajesh@example.com,CSE,Professor,6
+FAC005,Dr. Shilpa Mahajan,shilpa@example.com,CSE,Associate Professor,4
+FAC006,Dr. Sukhandeep Kaur,sukhandeep@example.com,ME,Assistant Professor,5
+FAC007,Dr. Sunita Rao,sunita@example.com,ME,Assistant Professor,4
+FAC008,Prof. Amit Verma,amit@example.com,CSE,Assistant Professor,4
+FAC009,Dr. Aditi Iyer,aditi.iyer9@example.com,CE,Assistant Professor,5
+FAC010,Dr. Akash Rana,akash.rana10@example.com,CSE,Professor,6
+FAC011,Dr. Naina Sood,naina.sood11@example.com,CE,Associate Professor,6
+FAC012,Dr. Harshit Malhotra,harshit.malhotra12@example.com,CSE,Assistant Professor,4
+FAC013,Dr. Diya Gupta,diya.gupta13@example.com,CE,Professor,6
+FAC014,Dr. Rohan Jain,rohan.jain14@example.com,CSE,Associate Professor,6
+FAC015,Dr. Sneha Joshi,sneha.joshi15@example.com,CE,Assistant Professor,5
+FAC016,Dr. Siddharth Arora,siddharth.arora16@example.com,CSE,Professor,6
+FAC017,Dr. Shreya Dutta,shreya.dutta17@example.com,CE,Associate Professor,6
+FAC018,Dr. Yash Bansal,yash.bansal18@example.com,CSE,Assistant Professor,4
+FAC019,Dr. Mitali Menon,mitali.menon19@example.com,CE,Professor,6
+FAC020,Dr. Saurabh Kohli,saurabh.kohli20@example.com,CSE,Associate Professor,6
+FAC021,Dr. Meera Saxena,meera.saxena21@example.com,CE,Assistant Professor,5
+FAC022,Dr. Karan Kulkarni,karan.kulkarni22@example.com,CSE,Professor,6
+FAC023,Dr. Ritika Patel,ritika.patel23@example.com,CE,Associate Professor,6
+FAC024,Dr. Abhishek Chopra,abhishek.chopra24@example.com,CSE,Assistant Professor,4
+FAC025,Dr. Riya Bhatia,riya.bhatia25@example.com,CE,Professor,6
+FAC026,Dr. Kabir Ghosh,kabir.ghosh26@example.com,CSE,Associate Professor,6
+FAC027,Dr. Muskan Pillai,muskan.pillai27@example.com,CE,Assistant Professor,5
+FAC028,Dr. Arjun Agarwal,arjun.agarwal28@example.com,CSE,Professor,6
+FAC029,Dr. Pooja Singh,pooja.singh29@example.com,CE,Associate Professor,6
+FAC030,Dr. Manish Desai,manish.desai30@example.com,CSE,Assistant Professor,4
+FAC031,Dr. Tanvi Shah,tanvi.shah31@example.com,CE,Professor,6
+FAC032,Dr. Mohit Mehta,mohit.mehta32@example.com,CSE,Associate Professor,6
+FAC033,Dr. Tanya Mishra,tanya.mishra33@example.com,CE,Assistant Professor,5
+FAC034,Dr. Varsha Rao,varsha.rao34@example.com,CSE,Professor,6
+FAC035,Dr. Kavya Kapoor,kavya.kapoor35@example.com,CE,Associate Professor,6
+FAC036,Dr. Vikram Khanna,vikram.khanna36@example.com,CSE,Assistant Professor,4
+FAC037,Dr. Divya Chawla,divya.chawla37@example.com,CE,Professor,6
+FAC038,Dr. Pranav Reddy,pranav.reddy38@example.com,CSE,Associate Professor,6
+FAC039,Dr. Sakshi Sethi,sakshi.sethi39@example.com,CE,Assistant Professor,5
+FAC040,Dr. Aman Nambiar,aman.nambiar40@example.com,CSE,Professor,6
+FAC041,Dr. Kunal Iyer,kunal.iyer41@example.com,CE,Associate Professor,6
+FAC042,Dr. Aditya Rana,aditya.rana42@example.com,CSE,Assistant Professor,4
+FAC043,Dr. Neha Sood,neha.sood43@example.com,CE,Professor,6
+FAC044,Dr. Nikhil Malhotra,nikhil.malhotra44@example.com,CSE,Associate Professor,6
+FAC045,Dr. Ira Gupta,ira.gupta45@example.com,CE,Assistant Professor,5
+FAC046,Dr. Dev Jain,dev.jain46@example.com,CSE,Professor,6
+FAC047,Dr. Palak Joshi,palak.joshi47@example.com,CE,Associate Professor,6
+FAC048,Dr. Aarav Arora,aarav.arora48@example.com,CSE,Assistant Professor,4
+FAC049,Dr. Ishita Dutta,ishita.dutta49@example.com,CE,Professor,6
+FAC050,Dr. Varun Bansal,varun.bansal50@example.com,CSE,Associate Professor,6
+FAC051,Dr. Simran Menon,simran.menon51@example.com,CE,Assistant Professor,5
+FAC052,Dr. Gaurav Kohli,gaurav.kohli52@example.com,CSE,Professor,6
+FAC053,Dr. Anika Saxena,anika.saxena53@example.com,CE,Associate Professor,6
+FAC054,Dr. Rajat Kulkarni,rajat.kulkarni54@example.com,CSE,Assistant Professor,4
+FAC055,Dr. Ananya Patel,ananya.patel55@example.com,CE,Professor,6
+FAC056,Dr. Rahul Chopra,rahul.chopra56@example.com,CSE,Associate Professor,6
+FAC057,Dr. Aditi Bhatia,aditi.bhatia57@example.com,CE,Assistant Professor,5
+FAC058,Dr. Akash Ghosh,akash.ghosh58@example.com,CSE,Professor,6
+FAC059,Dr. Naina Pillai,naina.pillai59@example.com,CE,Associate Professor,6
+FAC060,Dr. Harshit Agarwal,harshit.agarwal60@example.com,CSE,Assistant Professor,4
+FAC061,Dr. Diya Singh,diya.singh61@example.com,CE,Professor,6
+FAC062,Dr. Rohan Desai,rohan.desai62@example.com,CSE,Associate Professor,6
+FAC063,Dr. Sneha Shah,sneha.shah63@example.com,CE,Assistant Professor,5
+FAC064,Dr. Siddharth Mehta,siddharth.mehta64@example.com,CSE,Professor,6
+FAC065,Dr. Shreya Mishra,shreya.mishra65@example.com,CE,Associate Professor,6
+FAC066,Dr. Yash Rao,yash.rao66@example.com,CSE,Assistant Professor,4
+FAC067,Dr. Mitali Kapoor,mitali.kapoor67@example.com,CE,Professor,6
+FAC068,Dr. Saurabh Khanna,saurabh.khanna68@example.com,CSE,Associate Professor,6
+FAC069,Dr. Meera Chawla,meera.chawla69@example.com,CE,Assistant Professor,5
+FAC070,Dr. Karan Reddy,karan.reddy70@example.com,CSE,PhD,6
+FAC071,Dr. Ritika Sethi,ritika.sethi71@example.com,CE,Associate Professor,6
+FAC072,Dr. Abhishek Nambiar,abhishek.nambiar72@example.com,CSE,Assistant Professor,4
+FAC073,Dr. Riya Iyer,riya.iyer73@example.com,CE,Professor,6
+FAC074,Dr. Kabir Rana,kabir.rana74@example.com,CSE,Associate Professor,6
+FAC075,Dr. Muskan Sood,muskan.sood75@example.com,CE,Assistant Professor,5
+FAC076,Dr. Arjun Malhotra,arjun.malhotra76@example.com,CSE,Professor,6
+FAC077,Dr. Pooja Gupta,pooja.gupta77@example.com,CE,Associate Professor,6
+FAC078,Dr. Manish Jain,manish.jain78@example.com,CSE,Assistant Professor,4
+FAC079,Dr. Tanvi Joshi,tanvi.joshi79@example.com,CE,Professor,6
+FAC080,Dr. Mohit Arora,mohit.arora80@example.com,CSE,Associate Professor,6
+FAC081,Dr. Tanya Dutta,tanya.dutta81@example.com,CE,Assistant Professor,5
+FAC082,Dr. Varsha Bansal,varsha.bansal82@example.com,CSE,Professor,6
+FAC083,Dr. Kavya Menon,kavya.menon83@example.com,CE,Associate Professor,6
+FAC084,Dr. Vikram Kohli,vikram.kohli84@example.com,CSE,Assistant Professor,4
+FAC085,Dr. Divya Saxena,divya.saxena85@example.com,CE,Professor,6
+FAC086,Dr. Pranav Kulkarni,pranav.kulkarni86@example.com,CSE,Associate Professor,6
+FAC087,Dr. Sakshi Patel,sakshi.patel87@example.com,CE,Assistant Professor,5
+FAC088,Dr. Aman Chopra,aman.chopra88@example.com,CSE,Professor,6
+FAC089,Dr. Kunal Bhatia,kunal.bhatia89@example.com,CE,Associate Professor,6
+FAC090,Dr. Aditya Ghosh,aditya.ghosh90@example.com,CSE,Assistant Professor,4
+FAC091,Dr. Neha Pillai,neha.pillai91@example.com,CE,Professor,6
+FAC092,Dr. Nikhil Agarwal,nikhil.agarwal92@example.com,CSE,Associate Professor,6
+FAC093,Dr. Ira Singh,ira.singh93@example.com,CE,Assistant Professor,5
+FAC094,Dr. Dev Desai,dev.desai94@example.com,CSE,Professor,6
+FAC095,Dr. Palak Shah,palak.shah95@example.com,CE,Associate Professor,6
+FAC096,Dr. Aarav Mehta,aarav.mehta96@example.com,CSE,Assistant Professor,4
+FAC097,Dr. Ishita Mishra,ishita.mishra97@example.com,CE,Professor,6
+FAC098,Dr. Varun Rao,varun.rao98@example.com,CSE,Associate Professor,6
+FAC099,Dr. Simran Kapoor,simran.kapoor99@example.com,CE,Assistant Professor,5
+FAC100,Dr. Gaurav Khanna,gaurav.khanna100@example.com,CSE,Professor,6
