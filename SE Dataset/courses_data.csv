@@ -1,0 +1,45 @@
+course_code,course_name,department,semester,difficulty_level
+CSE2001,Data Structures and Algorithms,CSE,Sem 3,4
+CSE2002,Object Oriented Programming,CSE,3,3
+CSE2003,Discrete Mathematics,CSE,Sem 3,4
+CSE2004,Computer Organization and Architecture,CSE,Sem 3,4
+CSE2005,Digital Logic Design,CSE,Sem 3,3
+ECE2001,Digital Electronics,ECE,Sem 3,4
+ECE2002,Network Analysis,ECE,Sem 3,4
+ECE2003,Analog Electronics,ECE,Sem 3,4
+ME2001,Engineering Mechanics,ME,Sem 3,3
+ME2002,Fluid Mechanics,ME,Sem 3,4
+ME2003,Engineering Materials,ME,Sem 3,3
+CSE3002,Database Management Systems,CSE,Sem 4,4
+CSE3005,Software Engineering,CSE,Sem 4,3
+CSE3010,Operating Systems,CSE,4,4
+CSE3015,Computer Networks,CSE,Sem 4,3
+CSE3020,Design and Analysis of Algorithms,CSE,Sem 4,5
+ECE2005,Signals and Systems,ECE,Sem 4,5
+ECE2006,Microprocessors and Microcontrollers,ECE,Sem 4,4
+ECE2007,Communication Systems,ECE,Sem 4,4
+ME1001,Thermodynamics,ME,Sem 4,5
+ME2005,Strength of Materials,ME,Sem 4,4
+ME2006,Kinematics of Machines,ME,Sem 4,4
+CSE3025,Theory of Computation,CSE,Sem 5,5
+CSE3030,Compiler Design,CSE,Sem 5,4
+CSE3035,Artificial Intelligence,CSE,Sem 5,4
+CSE3040,Web Technologies,CSE,Sem 5,2
+CSE3045,Information Security,CSE,Sem 5,3
+ECE3001,VLSI Design,ECE,Sem 5,5
+ECE3002,Digital Signal Processing,ECE,Sem 5,5
+ECE3003,Control Systems,ECE,Sem 5,4
+ME3001,Heat and Mass Transfer,ME,Sem 5,4
+ME3002,Machine Design,ME,Sem 5,4
+ME3003,Manufacturing Processes,ME,Sem 5,3
+CSE4001,Machine Learning,CSE,Sem 6,4
+CSE4002,Cloud Computing,CSE,Sem 6,3
+CSE4003,Big Data Analytics,CSE,Sem 6,4
+CSE4004,Mobile Application Development,CSE,Sem 6,2
+CSE4005,Distributed Systems,CSE,Sem 6,5
+ECE3010,Embedded Systems,ECE,Sem 6,4
+ECE3011,Wireless Communication,ECE,Sem 6,4
+ECE3012,Antenna and Wave Propagation,ECE,Sem 6,5
+ME3010,Refrigeration and Air Conditioning,ME,Sem 6,3
+ME3011,Dynamics of Machinery,ME,Sem 6,5
+ME3012,CAD/CAM,ME,Sem 6,3
